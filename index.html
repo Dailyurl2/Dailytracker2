@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mi Bienestar">
+<meta name="theme-color" content="#C2607A">
+<title>Mi Bienestar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#C2607A;--rose-light:#F5E6EC;--teal:#3A9E8A;--teal-light:#E0F2EE;--amber:#C08030;--amber-light:#FBF0E0;--blue:#4A7FB5;--blue-light:#E5EFF8;--bg:#FAF8F6;--surface:#FFFFFF;--border:rgba(0,0,0,0.08);--border-mid:rgba(0,0,0,0.14);--text:#1A1512;--text-2:#6B5E58;--text-3:#A89990;--radius:16px;--radius-sm:10px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{background:var(--bg);}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;padding-bottom:88px;}
+
+/* INSTALL BANNER */
+.install-banner{background:linear-gradient(135deg,#C2607A,#9F4F68);color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;position:relative;}
+.install-banner.hidden{display:none;}
+.ib-icon{font-size:28px;flex-shrink:0;}
+.ib-text{flex:1;}
+.ib-title{font-size:13px;font-weight:500;line-height:1.3;}
+.ib-sub{font-size:11px;opacity:.85;margin-top:2px;line-height:1.4;}
+.ib-close{background:rgba(255,255,255,.25);border:none;color:white;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+
+/* HEADER */
+.app-header{padding:16px 20px 14px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.header-row{display:flex;align-items:center;justify-content:space-between;}
+.app-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);letter-spacing:-0.3px;}
+.header-actions{display:flex;gap:8px;}
+.hdr-btn{background:none;border:1px solid var(--border-mid);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--text-2);cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.hdr-btn:active{background:var(--bg);}
+.app-sub{font-size:11px;color:var(--text-3);margin-top:4px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:200;padding-bottom:env(safe-area-inset-bottom,8px);}
+.nav-btn{flex:1;padding:10px 4px 8px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.nav-icon{font-size:20px;}
+.nav-label{font-size:10px;color:var(--text-3);font-family:'DM Sans',sans-serif;}
+.nav-btn.on .nav-label{color:var(--rose);font-weight:500;}
+
+/* VIEWS */
+.view{display:none;padding:14px 16px;}
+.view.on{display:block;}
+
+/* DATE NAV */
+.date-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:var(--surface);border-radius:var(--radius);padding:12px 14px;border:1px solid var(--border);}
+.dnav-btn{background:var(--bg);border:1px solid var(--border-mid);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text-2);}
+.date-center{text-align:center;}
+.date-main{font-family:'DM Serif Display',serif;font-size:15px;color:var(--text);}
+.date-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+.today-badge{display:inline-block;background:var(--rose-light);color:var(--rose);font-size:10px;font-weight:500;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
+
+/* PHASE BANNER */
+.phase-banner{border-radius:var(--radius);padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.phase-pip{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.phase-name{font-size:14px;font-weight:500;}
+.phase-desc{font-size:11px;margin-top:2px;opacity:.8;}
+
+/* CARDS */
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;}
+.card-title{font-size:10px;font-weight:500;color:var(--text-3);letter-spacing:.07em;text-transform:uppercase;padding:14px 16px 0;}
+.card-body{padding:10px 16px 14px;}
+
+/* TOGGLES */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.t-label{font-size:14px;color:var(--text);}
+.toggle{width:44px;height:26px;background:#E0D8D4;border-radius:13px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none;}
+.toggle.on{background:var(--rose);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on::after{left:21px;}
+
+/* SLIDERS */
+.sl-row{margin-bottom:16px;}
+.sl-row:last-child{margin-bottom:0;}
+.sl-header{display:flex;justify-content:space-between;margin-bottom:6px;}
+.sl-label{font-size:13px;color:var(--text);}
+.sl-val{font-size:13px;font-weight:500;color:var(--rose);min-width:18px;text-align:right;}
+input[type=range]{width:100%;height:4px;border-radius:2px;-webkit-appearance:none;appearance:none;background:#EDE8E4;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--rose);box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.sl-ticks{display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);margin-top:3px;}
+
+/* NUMBER INPUT */
+input[type=number]{background:var(--bg);border:1px solid var(--border-mid);border-radius:var(--radius-sm);padding:9px 14px;font-size:15px;color:var(--text);font-family:'DM Sans',sans-serif;width:110px;text-align:center;-moz-appearance:textfield;}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+input[type=number]:focus{outline:none;border-color:var(--rose);}
+
+/* TEXTAREA */
+textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;resize:vertical;min-height:64px;margin-top:8px;}
+textarea:focus{outline:none;border-color:var(--rose);}
+
+/* ACTIVITY BLOCKS */
+.act-block{padding:11px 0;border-bottom:1px solid var(--border);}
+.act-block:last-child{border-bottom:none;}
+.act-notes{display:none;}
+.act-notes.show{display:block;}
+
+/* VIT TAGS */
+.vit-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.vit-tag{background:var(--bg);border:1.5px solid transparent;border-radius:20px;padding:6px 13px;cursor:pointer;font-size:12px;color:var(--text-2);font-family:'DM Sans',sans-serif;}
+.vit-tag.on{background:var(--teal-light);border-color:var(--teal);color:var(--teal);font-weight:500;}
+
+/* STD ALERT */
+.std-alert{background:var(--amber-light);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:var(--amber);margin-top:10px;line-height:1.6;display:none;}
+.std-alert.show{display:block;}
+
+/* SAVE BTN */
+.save-btn{width:100%;padding:15px;background:var(--rose);border:none;border-radius:var(--radius);color:white;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:4px;letter-spacing:.1px;}
+.save-btn:active{opacity:.85;transform:scale(.98);}
+.saved-ok{text-align:center;font-size:13px;color:var(--teal);margin-top:10px;height:18px;}
+
+/* RECO */
+.reco-block{background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;}
+.reco-title{font-size:11px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.reco-items{font-size:13px;color:var(--text);line-height:1.9;}
+
+/* HISTORIAL */
+.hist-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.hist-item:last-child{border-bottom:none;}
+.hist-date{font-size:11px;color:var(--text-3);min-width:68px;padding-top:2px;}
+.hist-body{font-size:12px;color:var(--text-2);line-height:1.7;flex:1;}
+.hist-tag{font-size:11px;font-weight:500;border-radius:5px;padding:2px 7px;display:inline-block;margin-bottom:5px;}
+
+/* CHARTS */
+.chart-wrap{position:relative;width:100%;height:200px;}
+.metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:4px;}
+.metric{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px;}
+.metric-lbl{font-size:10px;color:var(--text-3);margin-bottom:4px;}
+.metric-val{font-size:22px;font-weight:500;color:var(--text);}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;font-size:11px;color:var(--text-2);}
+.legend span{display:flex;align-items:center;gap:5px;}
+.ldot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+/* EXPORT/IMPORT BTNS */
+.btn-outline{width:100%;padding:13px;background:none;border:1px solid var(--border-mid);border-radius:var(--radius);color:var(--text-2);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;}
+.btn-outline:active{background:var(--bg);}
+.btn-outline.accent{border-color:var(--rose);color:var(--rose);}
+
+/* SECTION DIVIDER */
+.s-divider{font-size:12px;font-weight:500;color:var(--text-2);padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+
+/* MOON */
+.moon-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
+.moon-icon{font-size:26px;}
+.moon-name{font-size:14px;color:var(--text);}
+
+/* PESO ROW */
+.peso-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
+
+/* BACKUP INFO */
+.backup-info{background:var(--blue-light);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:#2A5F8A;line-height:1.6;margin-bottom:10px;}
+.backup-info strong{font-weight:500;}
+
+/* MODAL OVERLAY */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--surface);border-radius:var(--radius);padding:24px 20px;max-width:360px;width:100%;}
+.modal-title{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:10px;}
+.modal-body{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;}
+.modal-body ol{padding-left:18px;}
+.modal-body li{margin-bottom:6px;}
+.modal-body code{background:var(--bg);border-radius:4px;padding:1px 5px;font-size:12px;font-family:monospace;}
+.modal-close{width:100%;padding:13px;background:var(--rose);border:none;border-radius:var(--radius);color:white;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner">
+  <span class="ib-icon">📲</span>
+  <div class="ib-text">
+    <div class="ib-title">Instala la app en tu teléfono</div>
+    <div class="ib-sub">Toca los 3 puntos de Chrome → "Añadir a pantalla de inicio"</div>
+  </div>
+  <button class="ib-close" onclick="closeBanner()">✕</button>
+</div>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="header-row">
+    <div class="app-title">Mi bienestar</div>
+    <div class="header-actions">
+      <button class="hdr-btn" onclick="showInstallHelp()">📲 Instalar</button>
+      <button class="hdr-btn" onclick="triggerImport()">⬆ Importar</button>
+    </div>
+  </div>
+  <div class="app-sub" id="headerSub">Cargando datos…</div>
+</div>
+
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+
+<!-- REGISTRAR -->
+<div class="view on" id="view-reg">
+  <div class="date-nav">
+    <button class="dnav-btn" onclick="changeDay(-1)">&#8592;</button>
+    <div class="date-center">
+      <div class="date-main" id="dateMain"></div>
+      <div class="date-sub" id="dateSub"></div>
+    </div>
+    <button class="dnav-btn" onclick="changeDay(1)">&#8594;</button>
+  </div>
+
+  <div class="phase-banner" id="phaseBanner">
+    <div class="phase-pip" id="phasePip"></div>
+    <div>
+      <div class="phase-name" id="phaseName"></div>
+      <div class="phase-desc" id="phaseDesc"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ciclo menstrual</div>
+    <div class="card-body">
+      <div class="toggle-row">
+        <span class="t-label">Hoy comienza mi periodo</span>
+        <button class="toggle" id="togPeriod" onclick="tog('period_start','togPeriod')"></button>
+      </div>
+      <div class="sl-row" style="margin-top:12px;">
+        <div class="sl-header"><span class="sl-label">Flujo menstrual</span><span class="sl-val" id="v-flujo">0</span></div>
+        <input type="range" min="0" max="5" step="1" value="0" id="s-flujo" oninput="upd('flujo',this.value)">
+        <div class="sl-ticks"><span>Sin flujo</span><span>Ligero</span><span>Moderado</span><span>Abundante</span><span>Muy abund.</span><span>Intenso</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Salud sexual</div>
+    <div class="card-body">
+      <div class="toggle-row">
+        <span class="t-label">Tuve relaciones sexuales hoy</span>
+        <button class="toggle" id="togSexo" onclick="tog('tuvo_sexo','togSexo')"></button>
+      </div>
+      <div class="sl-row" style="margin-top:12px;">
+        <div class="sl-header"><span class="sl-label">Libido</span><span class="sl-val" id="v-libido">0</span></div>
+        <input type="range" min="0" max="10" step="1" value="0" id="s-libido" oninput="upd('libido',this.value)">
+        <div class="sl-ticks"><span>0</span><span>5</span><span>10</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cuerpo</div>
+    <div class="card-body">
+      <div class="peso-row">
+        <span class="t-label">Peso (kg)</span>
+        <input type="number" id="pesoinput" min="30" max="200" step="0.1" placeholder="ej. 62.5" oninput="today.peso=parseFloat(this.value)||null">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Alcohol</div>
+    <div class="card-body">
+      <div class="toggle-row" style="border-bottom:none;">
+        <span class="t-label">Consumí alcohol hoy</span>
+        <button class="toggle" id="togAlc" onclick="togAct('alcohol','togAlc','alcExtra')"></button>
+      </div>
+      <div class="act-notes" id="alcExtra">
+        <div class="sl-row" style="margin-top:12px;">
+          <div class="sl-header"><span class="sl-label">Número de bebidas</span><span class="sl-val" id="v-alcohol_cant">1</span></div>
+          <input type="range" min="1" max="10" step="1" value="1" id="s-alcohol_cant" oninput="upd('alcohol_cant',this.value)">
+          <div class="sl-ticks"><span>1</span><span>5</span><span>10</span></div>
+        </div>
+        <textarea id="txtAlcohol" placeholder="¿Qué tomaste? ¿Ocasión?" oninput="today.nota_alcohol=this.value"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Vitaminas y suplementos</div>
+    <div class="card-body">
+      <div style="font-size:12px;color:var(--text-3);">Selecciona las que tomaste hoy</div>
+      <div class="vit-grid" id="vitGrid">
+        <span class="vit-tag" onclick="togVit(this)">Vitamina D</span>
+        <span class="vit-tag" onclick="togVit(this)">Vitamina C</span>
+        <span class="vit-tag" onclick="togVit(this)">Vitamina B12</span>
+        <span class="vit-tag" onclick="togVit(this)">Complejo B</span>
+        <span class="vit-tag" onclick="togVit(this)">Hierro</span>
+        <span class="vit-tag" onclick="togVit(this)">Magnesio</span>
+        <span class="vit-tag" onclick="togVit(this)">Omega 3</span>
+        <span class="vit-tag" onclick="togVit(this)">Zinc</span>
+        <span class="vit-tag" onclick="togVit(this)">Ácido fólico</span>
+        <span class="vit-tag" onclick="togVit(this)">Colágeno</span>
+        <span class="vit-tag" onclick="togVit(this)">Probióticos</span>
+        <span class="vit-tag" onclick="togVit(this)">Melatonina</span>
+        <span class="vit-tag" onclick="togVit(this)">Anticonceptivo</span>
+      </div>
+      <textarea id="vitOtra" placeholder="Otra vitamina o medicamento..." oninput="today.vitamina_otra=this.value" style="min-height:44px;margin-top:10px;"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Estado de ánimo y mental</div>
+    <div class="card-body" id="sliders-mood"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Síntomas físicos</div>
+    <div class="card-body">
+      <div id="sliders-body"></div>
+      <div class="s-divider" style="margin-top:8px;">Síntomas de ITS / STD</div>
+      <div class="toggle-row"><span class="t-label">Secreción inusual</span><button class="toggle" id="togS1" onclick="togStd('std_secrecion','togS1')"></button></div>
+      <div class="toggle-row"><span class="t-label">Ardor o dolor al orinar</span><button class="toggle" id="togS2" onclick="togStd('std_ardor','togS2')"></button></div>
+      <div class="toggle-row"><span class="t-label">Picazón o irritación genital</span><button class="toggle" id="togS3" onclick="togStd('std_picazon','togS3')"></button></div>
+      <div class="toggle-row"><span class="t-label">Dolor pélvico o abdominal bajo</span><button class="toggle" id="togS4" onclick="togStd('std_dolor_pelvico','togS4')"></button></div>
+      <div class="toggle-row"><span class="t-label">Llagas o lesiones genitales</span><button class="toggle" id="togS5" onclick="togStd('std_lesiones','togS5')"></button></div>
+      <div class="toggle-row" style="border-bottom:none;"><span class="t-label">Fiebre sin causa aparente</span><button class="toggle" id="togS6" onclick="togStd('std_fiebre','togS6')"></button></div>
+      <div class="std-alert" id="stdAlert">Si presentas estos síntomas, considera consultar a tu médica o ginecóloga. El diagnóstico oportuno es clave para tu salud.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Estrés y vida</div>
+    <div class="card-body" id="sliders-stress"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Actividades del día</div>
+    <div class="card-body">
+      <div class="act-block">
+        <div class="toggle-row" style="border-bottom:none;padding-bottom:0;">
+          <span class="t-label">Ejercicio</span>
+          <button class="toggle" id="togEjercicio" onclick="togAct('ejercicio','togEjercicio','notesEjercicio')"></button>
+        </div>
+        <div class="act-notes" id="notesEjercicio"><textarea id="txtEjercicio" placeholder="¿Qué hiciste? ¿Cuánto tiempo?" oninput="today.nota_ejercicio=this.value"></textarea></div>
+      </div>
+      <div class="act-block">
+        <div class="toggle-row" style="border-bottom:none;padding-bottom:0;">
+          <span class="t-label">Caminata</span>
+          <button class="toggle" id="togCaminata" onclick="togAct('caminata','togCaminata','notesCaminata')"></button>
+        </div>
+        <div class="act-notes" id="notesCaminata"><textarea id="txtCaminata" placeholder="¿Cuánto tiempo? ¿Dónde?" oninput="today.nota_caminata=this.value"></textarea></div>
+      </div>
+      <div class="act-block" style="border-bottom:none;">
+        <div class="toggle-row" style="border-bottom:none;padding-bottom:0;">
+          <span class="t-label">Actividad recreativa</span>
+          <button class="toggle" id="togRec" onclick="togAct('recreativa','togRec','notesRec')"></button>
+        </div>
+        <div class="act-notes" id="notesRec"><textarea id="txtRec" placeholder="¿Qué actividad hiciste?" oninput="today.nota_recreativa=this.value"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Nota del día</div>
+    <div class="card-body">
+      <textarea id="notaDia" placeholder="¿Cómo te sentiste hoy en general? Algo que quieras recordar..." oninput="today.nota_dia=this.value"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fase lunar</div>
+    <div class="card-body">
+      <div class="moon-row"><span class="moon-icon" id="moonIcon"></span><span class="moon-name" id="moonName"></span></div>
+    </div>
+  </div>
+
+  <button class="save-btn" onclick="saveDay()">Guardar registro del día</button>
+  <div class="saved-ok" id="savedOk"></div>
+  <button class="save-btn" onclick="saveDay();setTimeout(exportJSON,500);" style="background:none;border:1.5px solid #C2607A;color:#C2607A;margin-top:8px;">Guardar + exportar respaldo ahora</button>
+</div>
+
+<!-- GUIA DE FASE -->
+<div class="view" id="view-reco">
+  <div id="recoContent"></div>
+</div>
+
+<!-- HISTORIAL -->
+<div class="view" id="view-hist">
+  <div class="backup-info">
+    <strong>Tus datos están seguros en este dispositivo.</strong> Exporta regularmente para hacer respaldo o para transferir a otro teléfono.
+  </div>
+  <div class="card" id="histContent"><div style="text-align:center;padding:2rem;color:var(--text-3);font-size:13px;">Sin registros aún</div></div>
+  <button class="btn-outline accent" onclick="exportJSON()">⬇ Exportar respaldo (.json)</button>
+  <button class="btn-outline" onclick="exportCSV()">📊 Exportar a Excel (.csv)</button>
+  <button class="btn-outline" onclick="triggerImport()">⬆ Importar respaldo (.json)</button>
+</div>
+
+<!-- GRAFICAS -->
+<div class="view" id="view-graf">
+  <div class="card"><div class="card-title">Resumen</div><div class="card-body"><div class="metric-grid" id="metricGrid"></div></div></div>
+  <div class="card">
+    <div class="card-title">Ánimo, libido y ansiedad — 30 días</div>
+    <div class="card-body">
+      <div class="legend">
+        <span><span class="ldot" style="background:#C2607A;"></span>Ánimo</span>
+        <span><span class="ldot" style="background:#9F7ED8;"></span>Libido</span>
+        <span><span class="ldot" style="background:#E24B4A;"></span>Ansiedad</span>
+      </div>
+      <div class="chart-wrap"><canvas id="chart1" role="img" aria-label="Ánimo, libido y ansiedad 30 días">Sin datos.</canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Estrés, irritabilidad y tensión — 30 días</div>
+    <div class="card-body">
+      <div class="legend">
+        <span><span class="ldot" style="background:#C08030;"></span>Estrés</span>
+        <span><span class="ldot" style="background:#E24B4A;"></span>Irritabilidad</span>
+        <span><span class="ldot" style="background:#4A7FB5;"></span>Tensión</span>
+      </div>
+      <div class="chart-wrap"><canvas id="chart2" role="img" aria-label="Estrés e irritabilidad 30 días">Sin datos.</canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Peso</div>
+    <div class="card-body">
+      <div class="chart-wrap"><canvas id="chart3" role="img" aria-label="Registro de peso">Sin datos.</canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn on" onclick="showView('reg',this)"><span class="nav-icon">📋</span><span class="nav-label">Registrar</span></button>
+  <button class="nav-btn" onclick="showView('reco',this)"><span class="nav-icon">🌸</span><span class="nav-label">Mi fase</span></button>
+  <button class="nav-btn" onclick="showView('hist',this)"><span class="nav-icon">📅</span><span class="nav-label">Historial</span></button>
+  <button class="nav-btn" onclick="showView('graf',this)"><span class="nav-icon">📊</span><span class="nav-label">Gráficas</span></button>
+</nav>
+
+<!-- INSTALL HELP MODAL -->
+<div class="modal-overlay" id="installModal">
+  <div class="modal-box">
+    <div class="modal-title">Instalar en Android</div>
+    <div class="modal-body">
+      <ol>
+        <li>Abre este archivo en <strong>Chrome</strong> (no en otra app)</li>
+        <li>Toca los <strong>3 puntos ⋮</strong> arriba a la derecha</li>
+        <li>Selecciona <strong>"Añadir a pantalla de inicio"</strong></li>
+        <li>Confirma — aparecerá como una app en tu pantalla</li>
+      </ol>
+      <br>
+      <strong>¿Cómo abrir el archivo desde Gmail o WhatsApp?</strong><br>
+      Cuando recibas el archivo, tócalo y elige <strong>"Abrir con Chrome"</strong>. Luego instálalo desde ahí siguiendo los pasos de arriba.<br><br>
+      <strong>¿Qué pasa con mis datos?</strong><br>
+      Una vez instalada, usa <strong>Exportar respaldo (.json)</strong> en Historial y guarda ese archivo en Google Drive. Si cambias de teléfono, importa ese archivo.
+    </div>
+    <button class="modal-close" onclick="document.getElementById('installModal').classList.remove('show')">Entendido</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+var curDate=new Date(),allData={},today={},c1,c2,c3;
+
+var MOOD_SLIDERS=[
+  {k:'animo',l:'Ánimo general'},{k:'positivismo',l:'Positivismo'},
+  {k:'entusiasmada',l:'Entusiasmada'},{k:'hacendosa',l:'Hacendosa / productiva'},
+  {k:'ansiedad',l:'Ansiedad'},{k:'angustiada',l:'Angustiada'},
+  {k:'enojo',l:'Enojo'},{k:'irritabilidad',l:'Irritabilidad'},
+  {k:'ira',l:'Ira'},{k:'furiosa',l:'Furiosa'},
+  {k:'hambre',l:'Hambre / antojos'},{k:'procrastinacion',l:'Procrastinación'},
+  {k:'diligencia',l:'Diligencia / motivación'},
+  {k:'tristeza',l:'Tristeza'},{k:'llanto',l:'Llanto / ganas de llorar'},
+  {k:'distimia',l:'Distimia (ánimo bajo persistente)'},
+  {k:'miedo',l:'Miedo'},{k:'paranoia',l:'Paranoia'}
+];
+var BODY_SLIDERS=[
+  {k:'tension',l:'Tensión corporal'},{k:'flujo_dolor',l:'Dolor menstrual'},
+  {k:'dolor_muscular',l:'Dolor muscular'},{k:'dolor_articular',l:'Dolor articular'},
+  {k:'dolor_pecho',l:'Dolor / tensión en pecho'},{k:'congestion',l:'Congestión nasal'}
+];
+var STRESS_SLIDERS=[
+  {k:'estres',l:'Estrés general'},{k:'estres_trabajo',l:'Estrés laboral'},
+  {k:'estres_vida',l:'Estrés de vida personal'},{k:'conflictos',l:'Conflictos / discusiones'}
+];
+var STD_KEYS=['std_secrecion','std_ardor','std_picazon','std_dolor_pelvico','std_lesiones','std_fiebre'];
+var PHASES=[
+  {n:'Menstruación',d:[1,2,3,4,5,6],c:'#C2607A',bg:'#F5E6EC',e:'Muy bajo',p:'Muy bajo',
+   info:'El cuerpo libera el revestimiento uterino. Estrógeno y progesterona en mínimos.',
+   activ:['Descanso activo','Yoga restaurativo','Caminatas suaves','Meditación'],
+   comida:['Hierro (lentejas, espinacas)','Jengibre para cólicos','Chocolate negro','Té de frambuesa'],
+   tips:['Usa calor en el abdomen','Hidratación extra','Prioriza el sueño']},
+  {n:'Fase folicular',d:[7,8,9,10,11,12,13],c:'#4A7FB5',bg:'#E5EFF8',e:'Subiendo',p:'Bajo',
+   info:'El estrógeno sube progresivamente. Más energía, optimismo y claridad mental.',
+   activ:['Cardio moderado a intenso','Pilates','Nuevos proyectos','Socializar'],
+   comida:['Fermentados (yogurt, kéfir)','Brócoli y semillas de lino','Proteína magra','Frutas frescas'],
+   tips:['Ideal para iniciar metas','Cerebro en modo aprendizaje','Aprovecha la energía alta']},
+  {n:'Ovulación',d:[14,15,16],c:'#3A9E8A',bg:'#E0F2EE',e:'Pico máximo',p:'Subiendo',
+   info:'Pico de estrógeno y LH. Máxima energía, comunicación y deseo social.',
+   activ:['Entrenamiento de alta intensidad','Baile y deportes en equipo','Actividades sociales'],
+   comida:['Antioxidantes (frutos rojos)','Fibra alta','Zinc (semillas de calabaza)','Agua de coco'],
+   tips:['Mayor confianza y elocuencia','Ideal para presentaciones','Libido en su punto más alto']},
+  {n:'Fase lútea',d:[17,18,19,20,21,22,23,24,25,26,27,28],c:'#C08030',bg:'#FBF0E0',e:'Bajando',p:'Alto luego baja',
+   info:'Progesterona domina. Energía más introspectiva; pueden aparecer síntomas premenstruales.',
+   activ:['Yoga y pilates','Caminatas','Actividades creativas','Reducir intensidad'],
+   comida:['Magnesio (aguacate, nueces)','Vitamina B6 (plátano, pollo)','Reducir sal y azúcar','Tés calmantes'],
+   tips:['Momento de reflexión','Si hay SPM: priorizar descanso','Los cambios de humor son hormonales']}
+];
+var MOON=[
+  {n:'Luna nueva',i:'🌑'},{n:'Luna creciente',i:'🌒'},{n:'Cuarto creciente',i:'🌓'},
+  {n:'Luna gibosa creciente',i:'🌔'},{n:'Luna llena',i:'🌕'},{n:'Luna gibosa menguante',i:'🌖'},
+  {n:'Cuarto menguante',i:'🌗'},{n:'Luna menguante',i:'🌘'}
+];
+
+function moon(d){var diff=(d-new Date('2000-01-06T18:14:00Z'))/864e5,c=29.53058867;return MOON[Math.floor(((diff%c)+c)%c/(c/8))%8];}
+function fmt(d){return d.toISOString().split('T')[0];}
+function isToday(d){return fmt(d)===fmt(new Date());}
+function cycleDay(date){
+  var ds=fmt(date),starts=Object.keys(allData).filter(function(k){return allData[k].period_start;}).sort(),last=null;
+  for(var i=0;i<starts.length;i++){if(starts[i]<=ds)last=starts[i];}
+  if(!last)return null;
+  return Math.floor((new Date(ds+'T12:00:00')-new Date(last+'T12:00:00'))/864e5)+1;
+}
+function phase(cd){
+  if(!cd||cd<1)return null;
+  var day=((cd-1)%28)+1;
+  for(var i=0;i<PHASES.length;i++){if(PHASES[i].d.indexOf(day)>-1)return PHASES[i];}
+  return null;
+}
+function changeDay(n){curDate=new Date(curDate);curDate.setDate(curDate.getDate()+n);loadDay();}
+function upd(k,v){today[k]=parseInt(v);var el=document.getElementById('v-'+k);if(el)el.textContent=v;}
+function tog(k,id){today[k]=!today[k];document.getElementById(id).classList.toggle('on',!!today[k]);}
+function togStd(k,id){
+  today[k]=!today[k];document.getElementById(id).classList.toggle('on',!!today[k]);
+  var any=STD_KEYS.some(function(x){return today[x];});
+  document.getElementById('stdAlert').classList.toggle('show',any);
+}
+function togAct(k,tid,nid){
+  today[k]=!today[k];
+  document.getElementById(tid).classList.toggle('on',!!today[k]);
+  document.getElementById(nid).classList.toggle('show',!!today[k]);
+}
+function togVit(el){
+  if(!today.vitaminas)today.vitaminas=[];
+  var v=el.textContent;el.classList.toggle('on');
+  if(el.classList.contains('on')){if(today.vitaminas.indexOf(v)<0)today.vitaminas.push(v);}
+  else{today.vitaminas=today.vitaminas.filter(function(x){return x!==v;});}
+}
+function buildSl(cid,arr){
+  document.getElementById(cid).innerHTML=arr.map(function(s){
+    return '<div class="sl-row"><div class="sl-header"><span class="sl-label">'+s.l+'</span><span class="sl-val" id="v-'+s.k+'">'+(today[s.k]||0)+'</span></div>'+
+    '<input type="range" min="0" max="10" step="1" value="'+(today[s.k]||0)+'" oninput="upd(\''+s.k+'\',this.value)">'+
+    '<div class="sl-ticks"><span>0</span><span>5</span><span>10</span></div></div>';
+  }).join('');
+}
+function updateBanner(){
+  var cd=cycleDay(curDate),ph=phase(cd);
+  if(ph){
+    document.getElementById('phaseBanner').style.background=ph.bg;
+    document.getElementById('phasePip').style.background=ph.c;
+    document.getElementById('phaseName').style.color=ph.c;
+    document.getElementById('phaseName').textContent=ph.n+(cd?' — día '+cd:'');
+    document.getElementById('phaseDesc').textContent='Estrógeno: '+ph.e+' · Progesterona: '+ph.p;
+  } else {
+    document.getElementById('phaseBanner').style.background='#F5F3F1';
+    document.getElementById('phasePip').style.background='#A89990';
+    document.getElementById('phaseName').style.color='var(--text)';
+    document.getElementById('phaseName').textContent='Sin datos de ciclo';
+    document.getElementById('phaseDesc').textContent='Marca el inicio de tu periodo para calcular tu fase';
+  }
+}
+function loadDay(){
+  var key=fmt(curDate);
+  today=allData[key]?JSON.parse(JSON.stringify(allData[key])):{};
+  var todayFlag=isToday(curDate);
+  var m=moon(curDate);
+  document.getElementById('dateMain').innerHTML=
+    curDate.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})+
+    (todayFlag?'<span class="today-badge">hoy</span>':'');
+  document.getElementById('dateSub').textContent=m.i+' '+m.n;
+  document.getElementById('headerSub').textContent=Object.keys(allData).length+' días registrados';
+  document.getElementById('moonIcon').textContent=m.i;
+  document.getElementById('moonName').textContent=m.n;
+  document.getElementById('togPeriod').classList.toggle('on',!!today.period_start);
+  document.getElementById('togSexo').classList.toggle('on',!!today.tuvo_sexo);
+  var sf=document.getElementById('s-flujo');sf.value=today.flujo||0;document.getElementById('v-flujo').textContent=today.flujo||0;
+  var sl=document.getElementById('s-libido');sl.value=today.libido||0;document.getElementById('v-libido').textContent=today.libido||0;
+  document.getElementById('pesoinput').value=today.peso||'';
+  document.getElementById('togAlc').classList.toggle('on',!!today.alcohol);
+  document.getElementById('alcExtra').classList.toggle('show',!!today.alcohol);
+  var sa=document.getElementById('s-alcohol_cant');sa.value=today.alcohol_cant||1;document.getElementById('v-alcohol_cant').textContent=today.alcohol_cant||1;
+  document.getElementById('txtAlcohol').value=today.nota_alcohol||'';
+  document.getElementById('vitGrid').querySelectorAll('.vit-tag').forEach(function(t){
+    t.classList.toggle('on',(today.vitaminas||[]).indexOf(t.textContent)>-1);
+  });
+  document.getElementById('vitOtra').value=today.vitamina_otra||'';
+  buildSl('sliders-mood',MOOD_SLIDERS);
+  buildSl('sliders-body',BODY_SLIDERS);
+  buildSl('sliders-stress',STRESS_SLIDERS);
+  for(var i=0;i<STD_KEYS.length;i++){document.getElementById('togS'+(i+1)).classList.toggle('on',!!today[STD_KEYS[i]]);}
+  document.getElementById('stdAlert').classList.toggle('show',STD_KEYS.some(function(x){return today[x];}));
+  ['ejercicio','caminata','recreativa'].forEach(function(a){
+    var cap=a[0].toUpperCase()+a.slice(1);
+    document.getElementById('tog'+cap).classList.toggle('on',!!today[a]);
+    document.getElementById('notes'+cap).classList.toggle('show',!!today[a]);
+    document.getElementById('txt'+cap).value=today['nota_'+a]||'';
+  });
+  document.getElementById('notaDia').value=today.nota_dia||'';
+  document.getElementById('savedOk').textContent='';
+  updateBanner();
+}
+function saveDay(){
+  today.flujo=parseInt(document.getElementById('s-flujo').value)||0;
+  today.libido=parseInt(document.getElementById('s-libido').value)||0;
+  var pw=document.getElementById('pesoinput');if(pw.value)today.peso=parseFloat(pw.value);
+  var alcCant=document.getElementById('s-alcohol_cant');var alcTxt=document.getElementById('txtAlcohol');
+  if(today.alcohol&&alcCant&&alcTxt){today.alcohol_cant=parseInt(alcCant.value)||1;today.nota_alcohol=alcTxt.value;}
+  var vitEl=document.getElementById('vitOtra');if(vitEl)today.vitamina_otra=vitEl.value;
+  var ndEl=document.getElementById('notaDia');if(ndEl)today.nota_dia=ndEl.value;
+  ['ejercicio','caminata','recreativa'].forEach(function(a){
+    var cap=a[0].toUpperCase()+a.slice(1);
+    var el=document.getElementById('txt'+cap);
+    if(el)today['nota_'+a]=el.value;
+  });
+  allData[fmt(curDate)]=JSON.parse(JSON.stringify(today));
+  var json=JSON.stringify(allData);
+  var saved=false;
+  try{localStorage.setItem('bienestar_data',json);saved=true;}catch(e){}
+  try{if(!saved){sessionStorage.setItem('bienestar_data',json);saved=true;}}catch(e){}
+  var total=Object.keys(allData).length;
+  document.getElementById('headerSub').textContent=total+' dias registrados';
+  var ok=document.getElementById('savedOk');
+  if(saved){
+    ok.style.color='#3A9E8A';
+    ok.textContent='Guardado correctamente ('+total+' dias en total)';
+  } else {
+    ok.style.color='#C08030';
+    ok.textContent='Guardado en memoria. Exporta respaldo en Historial para no perder datos.';
+  }
+  setTimeout(function(){ok.textContent='';},4000);
+}
+
+/* EXPORT JSON (respaldo completo) */
+function exportJSON(){
+  var blob=new Blob([JSON.stringify({version:1,data:allData},null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='bienestar_respaldo_'+fmt(new Date())+'.json';a.click();
+}
+
+/* IMPORT JSON */
+function triggerImport(){document.getElementById('importFile').click();}
+function importData(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var parsed=JSON.parse(e.target.result);
+      var incoming=parsed.data||parsed;
+      var merged=Object.assign({},allData,incoming);
+      allData=merged;
+      localStorage.setItem('bienestar_data',JSON.stringify(allData));
+      loadDay();
+      alert('✓ Datos importados correctamente. Total: '+Object.keys(allData).length+' días.');
+    }catch(err){alert('El archivo no es válido. Asegúrate de importar un respaldo .json de esta app.');}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+/* EXPORT CSV */
+function exportCSV(){
+  var keys=Object.keys(allData).sort();
+  if(!keys.length){alert('No hay datos para exportar.');return;}
+  var cols=['fecha','fase_ciclo','dia_ciclo','periodo_inicio','relaciones_sexuales','flujo','libido','peso',
+    'alcohol','alcohol_bebidas','nota_alcohol','vitaminas','vitamina_otra',
+    'animo','positivismo','entusiasmada','hacendosa','ansiedad','angustiada','enojo','irritabilidad','ira','furiosa','hambre','procrastinacion','diligencia',
+    'tristeza','llanto','distimia','miedo','paranoia',
+    'tension','dolor_menstrual','dolor_muscular','dolor_articular','dolor_pecho','congestion',
+    'std_secrecion','std_ardor','std_picazon','std_dolor_pelvico','std_lesiones','std_fiebre',
+    'estres','estres_trabajo','estres_vida','conflictos',
+    'ejercicio','nota_ejercicio','caminata','nota_caminata','recreativa','nota_recreativa','nota_dia'];
+  var csv='\uFEFF'+cols.join(',')+'\n';
+  keys.forEach(function(k){
+    var d=allData[k],cd=cycleDay(new Date(k+'T12:00:00')),ph=phase(cd);
+    var esc=function(v){return '"'+(v||'').toString().replace(/"/g,'""')+'"';};
+    var row=[k,ph?ph.n:'',cd||'',d.period_start?'Sí':'No',d.tuvo_sexo?'Sí':'No',
+      d.flujo||0,d.libido||0,d.peso||'',d.alcohol?'Sí':'No',d.alcohol_cant||0,esc(d.nota_alcohol),
+      esc((d.vitaminas||[]).join(' | ')),esc(d.vitamina_otra),
+      d.animo||0,d.positivismo||0,d.entusiasmada||0,d.hacendosa||0,d.ansiedad||0,d.angustiada||0,d.enojo||0,d.irritabilidad||0,d.ira||0,d.furiosa||0,d.hambre||0,d.procrastinacion||0,d.diligencia||0,
+      d.tristeza||0,d.llanto||0,d.distimia||0,d.miedo||0,d.paranoia||0,
+      d.tension||0,d.flujo_dolor||0,d.dolor_muscular||0,d.dolor_articular||0,d.dolor_pecho||0,d.congestion||0,
+      d.std_secrecion?'Sí':'No',d.std_ardor?'Sí':'No',d.std_picazon?'Sí':'No',d.std_dolor_pelvico?'Sí':'No',d.std_lesiones?'Sí':'No',d.std_fiebre?'Sí':'No',
+      d.estres||0,d.estres_trabajo||0,d.estres_vida||0,d.conflictos||0,
+      d.ejercicio?'Sí':'No',esc(d.nota_ejercicio),d.caminata?'Sí':'No',esc(d.nota_caminata),d.recreativa?'Sí':'No',esc(d.nota_recreativa),esc(d.nota_dia)
+    ];
+    csv+=row.join(',')+'\n';
+  });
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='bienestar_'+fmt(new Date())+'.csv';a.click();
+}
+
+function buildReco(){
+  var cd=cycleDay(curDate)||1,ph=phase(cd)||PHASES[0];
+  document.getElementById('recoContent').innerHTML=
+    '<div class="phase-banner" style="background:'+ph.bg+';margin-bottom:12px;">'+
+    '<div class="phase-pip" style="background:'+ph.c+';"></div>'+
+    '<div><div class="phase-name" style="color:'+ph.c+';">'+ph.n+(cd?' — día '+cd:'')+'</div>'+
+    '<div class="phase-desc" style="color:'+ph.c+';">Estrógeno: '+ph.e+' · Progesterona: '+ph.p+'</div></div></div>'+
+    '<div class="card"><div class="card-body" style="font-size:13px;color:var(--text-2);line-height:1.7;">'+ph.info+'</div></div>'+
+    '<div class="card"><div class="card-body">'+
+    '<div class="reco-block"><div class="reco-title">Actividades recomendadas</div><div class="reco-items">'+ph.activ.map(function(a){return '· '+a;}).join('<br>')+'</div></div>'+
+    '<div class="reco-block"><div class="reco-title">Alimentación sugerida</div><div class="reco-items">'+ph.comida.map(function(a){return '· '+a;}).join('<br>')+'</div></div>'+
+    '<div class="reco-block" style="margin-bottom:0;"><div class="reco-title">Tips para esta fase</div><div class="reco-items">'+ph.tips.map(function(a){return '· '+a;}).join('<br>')+'</div></div>'+
+    '</div></div>';
+}
+function buildHist(){
+  var keys=Object.keys(allData).sort().reverse().slice(0,60);
+  var el=document.getElementById('histContent');
+  if(!keys.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text-3);font-size:13px;">Sin registros aún</div>';return;}
+  el.innerHTML='<div class="card-body">'+keys.map(function(k){
+    var d=allData[k],cd=cycleDay(new Date(k+'T12:00:00')),ph=phase(cd);
+    var ds=new Date(k+'T12:00:00').toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'});
+    var pills=[d.animo?'Ánimo:'+d.animo:'',d.ansiedad?'Ansiedad:'+d.ansiedad:'',d.libido?'Libido:'+d.libido:'',d.peso?d.peso+'kg':''].filter(Boolean).join(' · ');
+    var acts=[d.ejercicio?'Ejercicio':'',d.caminata?'Caminata':'',d.recreativa?'Recreativa':'',d.alcohol?'Alcohol':''].filter(Boolean).join(', ');
+    var vits=(d.vitaminas||[]).length?d.vitaminas.slice(0,3).join(', '):'';
+    return '<div class="hist-item"><div class="hist-date">'+ds+'</div><div class="hist-body">'+
+      (ph?'<span class="hist-tag" style="background:'+ph.bg+';color:'+ph.c+';">'+ph.n+'</span><br>':'')+
+      (d.period_start?'<span style="color:#C2607A;font-weight:500;">Inicio de periodo</span><br>':'')+
+      (d.tuvo_sexo?'<span style="color:#9F7ED8;">Relaciones sexuales</span><br>':'')+
+      (pills?'<span>'+pills+'</span><br>':'')+
+      (vits?'<span style="color:#3A9E8A;">'+vits+'</span><br>':'')+
+      (acts?'<span style="color:var(--text-3);">'+acts+'</span>':'')+'</div></div>';
+  }).join('')+'</div>';
+}
+function buildCharts(){
+  var keys=Object.keys(allData).sort().slice(-30);
+  if(!keys.length)return;
+  var labels=keys.map(function(k){return new Date(k+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'});});
+  if(c1)c1.destroy();if(c2)c2.destroy();if(c3)c3.destroy();
+  var opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:10,ticks:{font:{size:10}}},x:{ticks:{autoSkip:true,maxTicksLimit:8,font:{size:10}},grid:{display:false}}}};
+  c1=new Chart(document.getElementById('chart1'),{type:'line',data:{labels:labels,datasets:[
+    {label:'Ánimo',data:keys.map(function(k){return allData[k].animo||null;}),borderColor:'#C2607A',backgroundColor:'rgba(194,96,122,.07)',tension:.4,pointRadius:3,fill:true,spanGaps:true},
+    {label:'Libido',data:keys.map(function(k){return allData[k].libido||null;}),borderColor:'#9F7ED8',backgroundColor:'transparent',tension:.4,pointRadius:3,spanGaps:true},
+    {label:'Ansiedad',data:keys.map(function(k){return allData[k].ansiedad||null;}),borderColor:'#E24B4A',backgroundColor:'transparent',tension:.4,pointRadius:3,borderDash:[4,3],spanGaps:true}
+  ]},options:opts});
+  c2=new Chart(document.getElementById('chart2'),{type:'line',data:{labels:labels,datasets:[
+    {label:'Estrés',data:keys.map(function(k){return allData[k].estres||null;}),borderColor:'#C08030',backgroundColor:'transparent',tension:.4,pointRadius:3,spanGaps:true},
+    {label:'Irritabilidad',data:keys.map(function(k){return allData[k].irritabilidad||null;}),borderColor:'#E24B4A',backgroundColor:'transparent',tension:.4,pointRadius:3,borderDash:[4,3],spanGaps:true},
+    {label:'Tensión',data:keys.map(function(k){return allData[k].tension||null;}),borderColor:'#4A7FB5',backgroundColor:'transparent',tension:.4,pointRadius:3,spanGaps:true}
+  ]},options:opts});
+  var pk=Object.keys(allData).filter(function(k){return allData[k].peso;}).sort();
+  if(pk.length){c3=new Chart(document.getElementById('chart3'),{type:'line',data:{
+    labels:pk.map(function(k){return new Date(k+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'});}),
+    datasets:[{label:'Peso',data:pk.map(function(k){return allData[k].peso;}),borderColor:'#3A9E8A',backgroundColor:'rgba(58,158,138,.08)',tension:.4,pointRadius:4,fill:true}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:10},callback:function(v){return v+'kg';}}},x:{ticks:{autoSkip:true,maxTicksLimit:8,font:{size:10}},grid:{display:false}}}}});}
+  var ak=Object.keys(allData);
+  var avg=function(arr){return arr.length?Math.round(arr.reduce(function(a,b){return a+b;},0)/arr.length*10)/10:'—';};
+  document.getElementById('metricGrid').innerHTML=
+    '<div class="metric"><div class="metric-lbl">Ánimo prom.</div><div class="metric-val">'+avg(ak.map(function(k){return allData[k].animo;}).filter(Boolean))+'</div></div>'+
+    '<div class="metric"><div class="metric-lbl">Ansiedad prom.</div><div class="metric-val">'+avg(ak.map(function(k){return allData[k].ansiedad;}).filter(Boolean))+'</div></div>'+
+    '<div class="metric"><div class="metric-lbl">Días registrados</div><div class="metric-val">'+ak.length+'</div></div>';
+}
+function showView(name,btn){
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('view-'+name).classList.add('on');btn.classList.add('on');
+  if(name==='reco')buildReco();if(name==='hist')buildHist();if(name==='graf')buildCharts();
+  window.scrollTo(0,0);
+}
+function showInstallHelp(){document.getElementById('installModal').classList.add('show');}
+function closeBanner(){
+  document.getElementById('installBanner').classList.add('hidden');
+  localStorage.setItem('banner_closed','1');
+}
+
+/* INIT */
+try{var stored=localStorage.getItem('bienestar_data');if(stored)allData=JSON.parse(stored);}catch(e){}
+if(localStorage.getItem('banner_closed')==='1'){document.getElementById('installBanner').classList.add('hidden');}
+loadDay();
+</script>
+</body>
+</html>
