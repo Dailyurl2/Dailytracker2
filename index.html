@@ -219,9 +219,15 @@ textarea:focus{outline:none;border-color:var(--rose);}
         <button class="toggle" id="togPeriod" onclick="tog('period_start','togPeriod')"></button>
       </div>
       <div class="sl-row" style="margin-top:12px;">
-        <div class="sl-header"><span class="sl-label">Flujo menstrual</span><span class="sl-val" id="v-flujo">0</span></div>
-        <input type="range" min="0" max="5" step="1" value="0" id="s-flujo" oninput="upd('flujo',this.value)">
-        <div class="sl-ticks"><span>Sin flujo</span><span>Ligero</span><span>Moderado</span><span>Abundante</span><span>Muy abund.</span><span>Intenso</span></div>
+        <div class="sl-header" style="margin-bottom:8px;"><span class="sl-label">Flujo menstrual</span><span class="sl-val" id="v-flujo">—</span></div>
+        <div style="display:flex;justify-content:space-between;gap:4px;" id="flujo-btns">
+          <button onclick="selFlujo(0,this)" style="flex:1;padding:7px 2px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:transparent;color:#6B5E58;font-size:11px;cursor:pointer;font-family:inherit;">Sin flujo</button>
+          <button onclick="selFlujo(1,this)" style="flex:1;padding:7px 2px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:transparent;color:#6B5E58;font-size:11px;cursor:pointer;font-family:inherit;">Ligero</button>
+          <button onclick="selFlujo(2,this)" style="flex:1;padding:7px 2px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:transparent;color:#6B5E58;font-size:11px;cursor:pointer;font-family:inherit;">Moderado</button>
+          <button onclick="selFlujo(3,this)" style="flex:1;padding:7px 2px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:transparent;color:#6B5E58;font-size:11px;cursor:pointer;font-family:inherit;">Abundante</button>
+          <button onclick="selFlujo(4,this)" style="flex:1;padding:7px 2px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:transparent;color:#6B5E58;font-size:11px;cursor:pointer;font-family:inherit;">Muy abund.</button>
+          <button onclick="selFlujo(5,this)" style="flex:1;padding:7px 2px;border:1.5px solid rgba(0,0,0,0.12);border-radius:8px;background:transparent;color:#6B5E58;font-size:11px;cursor:pointer;font-family:inherit;">Intenso</button>
+        </div>
       </div>
     </div>
   </div>
@@ -234,9 +240,8 @@ textarea:focus{outline:none;border-color:var(--rose);}
         <button class="toggle" id="togSexo" onclick="tog('tuvo_sexo','togSexo')"></button>
       </div>
       <div class="sl-row" style="margin-top:12px;">
-        <div class="sl-header"><span class="sl-label">Libido</span><span class="sl-val" id="v-libido">0</span></div>
-        <input type="range" min="0" max="10" step="1" value="0" id="s-libido" oninput="upd('libido',this.value)">
-        <div class="sl-ticks"><span>0</span><span>5</span><span>10</span></div>
+        <div class="sl-header" style="margin-bottom:8px;"><span class="sl-label">Libido</span><span class="sl-val" id="v-libido">—</span></div>
+        <div style="display:flex;justify-content:space-between;gap:2px;" id="libido-btns"></div>
       </div>
     </div>
   </div>
@@ -260,9 +265,8 @@ textarea:focus{outline:none;border-color:var(--rose);}
       </div>
       <div class="act-notes" id="alcExtra">
         <div class="sl-row" style="margin-top:12px;">
-          <div class="sl-header"><span class="sl-label">Número de bebidas</span><span class="sl-val" id="v-alcohol_cant">1</span></div>
-          <input type="range" min="1" max="10" step="1" value="1" id="s-alcohol_cant" oninput="upd('alcohol_cant',this.value)">
-          <div class="sl-ticks"><span>1</span><span>5</span><span>10</span></div>
+          <div class="sl-header" style="margin-bottom:8px;"><span class="sl-label">Número de bebidas</span><span class="sl-val" id="v-alcohol_cant">—</span></div>
+          <div style="display:flex;justify-content:space-between;gap:2px;" id="alcohol-btns"></div>
         </div>
         <textarea id="txtAlcohol" placeholder="¿Qué tomaste? ¿Ocasión?" oninput="today.nota_alcohol=this.value"></textarea>
       </div>
@@ -287,6 +291,7 @@ textarea:focus{outline:none;border-color:var(--rose);}
         <span class="vit-tag" onclick="togVit(this)">Probióticos</span>
         <span class="vit-tag" onclick="togVit(this)">Melatonina</span>
         <span class="vit-tag" onclick="togVit(this)">Anticonceptivo</span>
+        <span class="vit-tag" onclick="togVit(this)">Astaxantina</span>
       </div>
       <textarea id="vitOtra" placeholder="Otra vitamina o medicamento..." oninput="today.vitamina_otra=this.value" style="min-height:44px;margin-top:10px;"></textarea>
     </div>
@@ -455,7 +460,12 @@ var MOOD_SLIDERS=[
   {k:'diligencia',l:'Diligencia / motivación'},
   {k:'tristeza',l:'Tristeza'},{k:'llanto',l:'Llanto / ganas de llorar'},
   {k:'distimia',l:'Distimia (ánimo bajo persistente)'},
-  {k:'miedo',l:'Miedo'},{k:'paranoia',l:'Paranoia'}
+  {k:'miedo',l:'Miedo'},{k:'paranoia',l:'Paranoia'},
+  {k:'tomo_esposo',l:'Tomó esposo'},{k:'enojo_esposo',l:'Enojo con esposo'},
+  {k:'musical',l:'Día que ando musical'},{k:'apetito',l:'Apetito'},
+  {k:'insomnio',l:'Insomnio'},{k:'despertar_temprano',l:'Despertar temprano'},
+  {k:'somnolienta',l:'Somnolienta / cansancio'},{k:'antojos',l:'Antojos'},
+  {k:'estrenimiento',l:'Estreñimiento'}
 ];
 var BODY_SLIDERS=[
   {k:'tension',l:'Tensión corporal'},{k:'flujo_dolor',l:'Dolor menstrual'},
@@ -529,13 +539,54 @@ function togVit(el){
   if(el.classList.contains('on')){if(today.vitaminas.indexOf(v)<0)today.vitaminas.push(v);}
   else{today.vitaminas=today.vitaminas.filter(function(x){return x!==v;});}
 }
+function buildNumBtns(containerId,key,curVal,min,max){
+  var c=document.getElementById(containerId);
+  if(!c)return;
+  var html='';
+  for(var i=min;i<=max;i++){
+    var active=curVal===i;
+    html+='<button onclick="selNum(\''+key+'\','+i+',this.parentNode)" style="flex:1;padding:7px 0;border:1.5px solid '+(active?'#C2607A':'rgba(0,0,0,0.12)')+';border-radius:8px;background:'+(active?'#C2607A':'transparent')+';color:'+(active?'white':'#6B5E58')+';font-size:13px;cursor:pointer;font-family:inherit;">'+i+'</button>';
+  }
+  c.innerHTML=html;
+}
+function selFlujo(val,btn){
+  today.flujo=val;
+  var el=document.getElementById('v-flujo');
+  if(el)el.textContent=val===0?'Sin flujo':val;
+  var btns=btn.parentNode.querySelectorAll('button');
+  btns.forEach(function(b,i){
+    var active=i===val;
+    b.style.borderColor=active?'#C2607A':'rgba(0,0,0,0.12)';
+    b.style.background=active?'#C2607A':'transparent';
+    b.style.color=active?'white':'#6B5E58';
+  });
+}
 function buildSl(cid,arr){
   document.getElementById(cid).innerHTML=arr.map(function(s){
-    return '<div class="sl-row"><div class="sl-header"><span class="sl-label">'+s.l+'</span><span class="sl-val" id="v-'+s.k+'">'+(today[s.k]||0)+'</span></div>'+
-    '<input type="range" min="0" max="10" step="1" value="'+(today[s.k]||0)+'" oninput="upd(\''+s.k+'\',this.value)">'+
-    '<div class="sl-ticks"><span>0</span><span>5</span><span>10</span></div></div>';
+    var cur=today[s.k]||0;
+    var btns='';
+    for(var i=1;i<=10;i++){
+      var active=cur===i;
+      btns+='<button onclick="selNum(\''+s.k+'\','+i+',this.parentNode)" style="width:9%;padding:7px 0;border:1.5px solid '+(active?'#C2607A':'rgba(0,0,0,0.12)')+';border-radius:8px;background:'+(active?'#C2607A':'transparent')+';color:'+(active?'white':'#6B5E58')+';font-size:13px;font-weight:'+(active?'500':'400')+';cursor:pointer;font-family:inherit;">'+i+'</button>';
+    }
+    return '<div class="sl-row"><div class="sl-header" style="margin-bottom:8px;"><span class="sl-label">'+s.l+'</span><span class="sl-val" id="v-'+s.k+'">'+(cur||'—')+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;gap:2px;" id="btns-'+s.k+'">'+btns+'</div></div>';
   }).join('');
 }
+function selNum(key,val,container){
+  today[key]=val;
+  var el=document.getElementById('v-'+key);
+  if(el)el.textContent=val;
+  var btns=container.querySelectorAll('button');
+  btns.forEach(function(b,i){
+    var active=(i+1)===val;
+    b.style.borderColor=active?'#C2607A':'rgba(0,0,0,0.12)';
+    b.style.background=active?'#C2607A':'transparent';
+    b.style.color=active?'white':'#6B5E58';
+    b.style.fontWeight=active?'500':'400';
+  });
+}
+
 function updateBanner(){
   var cd=cycleDay(curDate),ph=phase(cd);
   if(ph){
@@ -566,12 +617,15 @@ function loadDay(){
   document.getElementById('moonName').textContent=m.n;
   document.getElementById('togPeriod').classList.toggle('on',!!today.period_start);
   document.getElementById('togSexo').classList.toggle('on',!!today.tuvo_sexo);
-  var sf=document.getElementById('s-flujo');sf.value=today.flujo||0;document.getElementById('v-flujo').textContent=today.flujo||0;
-  var sl=document.getElementById('s-libido');sl.value=today.libido||0;document.getElementById('v-libido').textContent=today.libido||0;
+  buildNumBtns('flujo-btns','flujo',today.flujo||0,1,10);
+  document.getElementById('v-flujo').textContent=today.flujo||'—';
+  buildNumBtns('libido-btns','libido',today.libido||0,1,10);
+  document.getElementById('v-libido').textContent=today.libido||'—';
   document.getElementById('pesoinput').value=today.peso||'';
   document.getElementById('togAlc').classList.toggle('on',!!today.alcohol);
   document.getElementById('alcExtra').classList.toggle('show',!!today.alcohol);
-  var sa=document.getElementById('s-alcohol_cant');sa.value=today.alcohol_cant||1;document.getElementById('v-alcohol_cant').textContent=today.alcohol_cant||1;
+  buildNumBtns('alcohol-btns','alcohol_cant',today.alcohol_cant||0,1,10);
+  document.getElementById('v-alcohol_cant').textContent=today.alcohol_cant||'—';
   document.getElementById('txtAlcohol').value=today.nota_alcohol||'';
   document.getElementById('vitGrid').querySelectorAll('.vit-tag').forEach(function(t){
     t.classList.toggle('on',(today.vitaminas||[]).indexOf(t.textContent)>-1);
@@ -593,11 +647,10 @@ function loadDay(){
   updateBanner();
 }
 function saveDay(){
-  today.flujo=parseInt(document.getElementById('s-flujo').value)||0;
-  today.libido=parseInt(document.getElementById('s-libido').value)||0;
+  // flujo and libido set directly via selNum/selFlujo buttons
   var pw=document.getElementById('pesoinput');if(pw.value)today.peso=parseFloat(pw.value);
-  var alcCant=document.getElementById('s-alcohol_cant');var alcTxt=document.getElementById('txtAlcohol');
-  if(today.alcohol&&alcCant&&alcTxt){today.alcohol_cant=parseInt(alcCant.value)||1;today.nota_alcohol=alcTxt.value;}
+  var alcTxt=document.getElementById('txtAlcohol');
+  if(today.alcohol&&alcTxt){today.nota_alcohol=alcTxt.value;}
   var vitEl=document.getElementById('vitOtra');if(vitEl)today.vitamina_otra=vitEl.value;
   var ndEl=document.getElementById('notaDia');if(ndEl)today.nota_dia=ndEl.value;
   ['ejercicio','caminata','recreativa'].forEach(function(a){
@@ -657,7 +710,7 @@ function exportCSV(){
   var cols=['fecha','fase_ciclo','dia_ciclo','periodo_inicio','relaciones_sexuales','flujo','libido','peso',
     'alcohol','alcohol_bebidas','nota_alcohol','vitaminas','vitamina_otra',
     'animo','positivismo','entusiasmada','hacendosa','ansiedad','angustiada','enojo','irritabilidad','ira','furiosa','hambre','procrastinacion','diligencia',
-    'tristeza','llanto','distimia','miedo','paranoia',
+    'tristeza','llanto','distimia','miedo','paranoia','tomo_esposo','enojo_esposo','musical','apetito','insomnio','despertar_temprano','somnolienta','antojos','estrenimiento',
     'tension','dolor_menstrual','dolor_muscular','dolor_articular','dolor_pecho','congestion',
     'std_secrecion','std_ardor','std_picazon','std_dolor_pelvico','std_lesiones','std_fiebre',
     'estres','estres_trabajo','estres_vida','conflictos',
@@ -670,7 +723,7 @@ function exportCSV(){
       d.flujo||0,d.libido||0,d.peso||'',d.alcohol?'Sí':'No',d.alcohol_cant||0,esc(d.nota_alcohol),
       esc((d.vitaminas||[]).join(' | ')),esc(d.vitamina_otra),
       d.animo||0,d.positivismo||0,d.entusiasmada||0,d.hacendosa||0,d.ansiedad||0,d.angustiada||0,d.enojo||0,d.irritabilidad||0,d.ira||0,d.furiosa||0,d.hambre||0,d.procrastinacion||0,d.diligencia||0,
-      d.tristeza||0,d.llanto||0,d.distimia||0,d.miedo||0,d.paranoia||0,
+      d.tristeza||0,d.llanto||0,d.distimia||0,d.miedo||0,d.paranoia||0,d.tomo_esposo||0,d.enojo_esposo||0,d.musical||0,d.apetito||0,d.insomnio||0,d.despertar_temprano||0,d.somnolienta||0,d.antojos||0,d.estrenimiento||0,
       d.tension||0,d.flujo_dolor||0,d.dolor_muscular||0,d.dolor_articular||0,d.dolor_pecho||0,d.congestion||0,
       d.std_secrecion?'Sí':'No',d.std_ardor?'Sí':'No',d.std_picazon?'Sí':'No',d.std_dolor_pelvico?'Sí':'No',d.std_lesiones?'Sí':'No',d.std_fiebre?'Sí':'No',
       d.estres||0,d.estres_trabajo||0,d.estres_vida||0,d.conflictos||0,
