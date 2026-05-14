@@ -312,7 +312,10 @@ textarea:focus{outline:none;border-color:var(--rose);}
       <div class="toggle-row"><span class="t-label">Picazón o irritación genital</span><button class="toggle" id="togS3" onclick="togStd('std_picazon','togS3')"></button></div>
       <div class="toggle-row"><span class="t-label">Dolor pélvico o abdominal bajo</span><button class="toggle" id="togS4" onclick="togStd('std_dolor_pelvico','togS4')"></button></div>
       <div class="toggle-row"><span class="t-label">Llagas o lesiones genitales</span><button class="toggle" id="togS5" onclick="togStd('std_lesiones','togS5')"></button></div>
-      <div class="toggle-row" style="border-bottom:none;"><span class="t-label">Fiebre sin causa aparente</span><button class="toggle" id="togS6" onclick="togStd('std_fiebre','togS6')"></button></div>
+      <div class="toggle-row"><span class="t-label">Fiebre sin causa aparente</span><button class="toggle" id="togS6" onclick="togStd('std_fiebre','togS6')"></button></div>
+      <div class="toggle-row"><span class="t-label">Lesión tobillo interna</span><button class="toggle" id="togS7" onclick="togStd('lesion_tobillo_interna','togS7')"></button></div>
+      <div class="toggle-row"><span class="t-label">Lesión tobillo externa</span><button class="toggle" id="togS8" onclick="togStd('lesion_tobillo_externa','togS8')"></button></div>
+      <div class="toggle-row" style="border-bottom:none;"><span class="t-label">Lesión mano</span><button class="toggle" id="togS9" onclick="togStd('lesion_mano','togS9')"></button></div>
       <div class="std-alert" id="stdAlert">Si presentas estos síntomas, considera consultar a tu médica o ginecóloga. El diagnóstico oportuno es clave para tu salud.</div>
     </div>
   </div>
@@ -451,7 +454,7 @@ textarea:focus{outline:none;border-color:var(--rose);}
 var curDate=new Date(),allData={},today={},c1,c2,c3;
 
 var MOOD_SLIDERS=[
-  {k:'animo',l:'Ánimo general'},{k:'positivismo',l:'Positivismo'},
+  {k:'positivismo',l:'Positivismo'},
   {k:'entusiasmada',l:'Entusiasmada'},{k:'hacendosa',l:'Hacendosa / productiva'},
   {k:'ansiedad',l:'Ansiedad'},{k:'angustiada',l:'Angustiada'},
   {k:'enojo',l:'Enojo'},{k:'irritabilidad',l:'Irritabilidad'},
@@ -465,18 +468,19 @@ var MOOD_SLIDERS=[
   {k:'musical',l:'Día que ando musical'},{k:'apetito',l:'Apetito'},
   {k:'insomnio',l:'Insomnio'},{k:'despertar_temprano',l:'Despertar temprano'},
   {k:'somnolienta',l:'Somnolienta / cansancio'},{k:'antojos',l:'Antojos'},
-  {k:'estrenimiento',l:'Estreñimiento'}
+  {k:'estrenimiento',l:'Estreñimiento'},{k:'estomago_suelto',l:'Estómago suelto'}
 ];
 var BODY_SLIDERS=[
   {k:'tension',l:'Tensión corporal'},{k:'flujo_dolor',l:'Dolor menstrual'},
   {k:'dolor_muscular',l:'Dolor muscular'},{k:'dolor_articular',l:'Dolor articular'},
-  {k:'dolor_pecho',l:'Dolor / tensión en pecho'},{k:'congestion',l:'Congestión nasal'}
+  {k:'dolor_pecho',l:'Dolor / tensión en pecho'},{k:'congestion',l:'Congestión nasal'},
+  {k:'acne',l:'Acné'}
 ];
 var STRESS_SLIDERS=[
   {k:'estres',l:'Estrés general'},{k:'estres_trabajo',l:'Estrés laboral'},
   {k:'estres_vida',l:'Estrés de vida personal'},{k:'conflictos',l:'Conflictos / discusiones'}
 ];
-var STD_KEYS=['std_secrecion','std_ardor','std_picazon','std_dolor_pelvico','std_lesiones','std_fiebre'];
+var STD_KEYS=['std_secrecion','std_ardor','std_picazon','std_dolor_pelvico','std_lesiones','std_fiebre','lesion_tobillo_interna','lesion_tobillo_externa','lesion_mano'];
 var PHASES=[
   {n:'Menstruación',d:[1,2,3,4,5,6],c:'#C2607A',bg:'#F5E6EC',e:'Muy bajo',p:'Muy bajo',
    info:'El cuerpo libera el revestimiento uterino. Estrógeno y progesterona en mínimos.',
@@ -634,7 +638,7 @@ function loadDay(){
   buildSl('sliders-mood',MOOD_SLIDERS);
   buildSl('sliders-body',BODY_SLIDERS);
   buildSl('sliders-stress',STRESS_SLIDERS);
-  for(var i=0;i<STD_KEYS.length;i++){document.getElementById('togS'+(i+1)).classList.toggle('on',!!today[STD_KEYS[i]]);}
+  for(var i=0;i<STD_KEYS.length;i++){var tEl=document.getElementById('togS'+(i+1));if(tEl)tEl.classList.toggle('on',!!today[STD_KEYS[i]]);}
   document.getElementById('stdAlert').classList.toggle('show',STD_KEYS.some(function(x){return today[x];}));
   ['ejercicio','caminata','recreativa'].forEach(function(a){
     var cap=a[0].toUpperCase()+a.slice(1);
@@ -709,10 +713,10 @@ function exportCSV(){
   if(!keys.length){alert('No hay datos para exportar.');return;}
   var cols=['fecha','fase_ciclo','dia_ciclo','periodo_inicio','relaciones_sexuales','flujo','libido','peso',
     'alcohol','alcohol_bebidas','nota_alcohol','vitaminas','vitamina_otra',
-    'animo','positivismo','entusiasmada','hacendosa','ansiedad','angustiada','enojo','irritabilidad','ira','furiosa','hambre','procrastinacion','diligencia',
-    'tristeza','llanto','distimia','miedo','paranoia','tomo_esposo','enojo_esposo','musical','apetito','insomnio','despertar_temprano','somnolienta','antojos','estrenimiento',
-    'tension','dolor_menstrual','dolor_muscular','dolor_articular','dolor_pecho','congestion',
-    'std_secrecion','std_ardor','std_picazon','std_dolor_pelvico','std_lesiones','std_fiebre',
+    'positivismo','entusiasmada','hacendosa','ansiedad','angustiada','enojo','irritabilidad','ira','furiosa','hambre','procrastinacion','diligencia',
+    'tristeza','llanto','distimia','miedo','paranoia','tomo_esposo','enojo_esposo','musical','insomnio','despertar_temprano','somnolienta','antojos','estrenimiento','estomago_suelto',
+    'tension','dolor_menstrual','dolor_muscular','dolor_articular','dolor_pecho','congestion','acne',
+    'std_secrecion','std_ardor','std_picazon','std_dolor_pelvico','std_lesiones','std_fiebre','lesion_tobillo_interna','lesion_tobillo_externa','lesion_mano',
     'estres','estres_trabajo','estres_vida','conflictos',
     'ejercicio','nota_ejercicio','caminata','nota_caminata','recreativa','nota_recreativa','nota_dia'];
   var csv='\uFEFF'+cols.join(',')+'\n';
@@ -722,10 +726,10 @@ function exportCSV(){
     var row=[k,ph?ph.n:'',cd||'',d.period_start?'Sí':'No',d.tuvo_sexo?'Sí':'No',
       d.flujo||0,d.libido||0,d.peso||'',d.alcohol?'Sí':'No',d.alcohol_cant||0,esc(d.nota_alcohol),
       esc((d.vitaminas||[]).join(' | ')),esc(d.vitamina_otra),
-      d.animo||0,d.positivismo||0,d.entusiasmada||0,d.hacendosa||0,d.ansiedad||0,d.angustiada||0,d.enojo||0,d.irritabilidad||0,d.ira||0,d.furiosa||0,d.hambre||0,d.procrastinacion||0,d.diligencia||0,
-      d.tristeza||0,d.llanto||0,d.distimia||0,d.miedo||0,d.paranoia||0,d.tomo_esposo||0,d.enojo_esposo||0,d.musical||0,d.apetito||0,d.insomnio||0,d.despertar_temprano||0,d.somnolienta||0,d.antojos||0,d.estrenimiento||0,
-      d.tension||0,d.flujo_dolor||0,d.dolor_muscular||0,d.dolor_articular||0,d.dolor_pecho||0,d.congestion||0,
-      d.std_secrecion?'Sí':'No',d.std_ardor?'Sí':'No',d.std_picazon?'Sí':'No',d.std_dolor_pelvico?'Sí':'No',d.std_lesiones?'Sí':'No',d.std_fiebre?'Sí':'No',
+      d.positivismo||0,d.entusiasmada||0,d.hacendosa||0,d.ansiedad||0,d.angustiada||0,d.enojo||0,d.irritabilidad||0,d.ira||0,d.furiosa||0,d.hambre||0,d.procrastinacion||0,d.diligencia||0,
+      d.tristeza||0,d.llanto||0,d.distimia||0,d.miedo||0,d.paranoia||0,d.tomo_esposo||0,d.enojo_esposo||0,d.musical||0,d.insomnio||0,d.despertar_temprano||0,d.somnolienta||0,d.antojos||0,d.estrenimiento||0,d.estomago_suelto||0,
+      d.tension||0,d.flujo_dolor||0,d.dolor_muscular||0,d.dolor_articular||0,d.dolor_pecho||0,d.congestion||0,d.acne||0,
+      d.std_secrecion?'Sí':'No',d.std_ardor?'Sí':'No',d.std_picazon?'Sí':'No',d.std_dolor_pelvico?'Sí':'No',d.std_lesiones?'Sí':'No',d.std_fiebre?'Sí':'No',d.lesion_tobillo_interna?'Sí':'No',d.lesion_tobillo_externa?'Sí':'No',d.lesion_mano?'Sí':'No',
       d.estres||0,d.estres_trabajo||0,d.estres_vida||0,d.conflictos||0,
       d.ejercicio?'Sí':'No',esc(d.nota_ejercicio),d.caminata?'Sí':'No',esc(d.nota_caminata),d.recreativa?'Sí':'No',esc(d.nota_recreativa),esc(d.nota_dia)
     ];
